@@ -5,7 +5,6 @@ import express from 'express';
 const app = express();
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import { validateTest } from './middleware/validationMiddleware.js';
 
 // ROUTERS
 import jobRouter from './routes/jobRouter.js';
@@ -23,14 +22,6 @@ app.get('/', (req, res) => {
   res.send('Hello, World');
 });
 
-app.post(
-  '/api/v1/test',
-  validateTest,
-  (req, res) => {
-    const { name } = req.body;
-    res.json({ message: `Hello, ${name}` });
-  }
-);
 
 app.use('/api/v1/jobs', jobRouter);
 
