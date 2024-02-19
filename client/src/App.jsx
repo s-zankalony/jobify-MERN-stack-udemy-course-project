@@ -1,3 +1,5 @@
+/** @format */
+
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -17,7 +19,7 @@ import {
   // EditJob,
 } from './pages';
 
-// import { action as registerAction } from './pages/Register';
+import { action as registerAction } from './pages/Register';
 // import { action as loginAction } from './pages/Login';
 // import { loader as dashboardLoader } from './pages/DashboardLayout';
 // import { action as addJobAction } from './pages/AddJob';
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
       {
         path: 'register',
         element: <Register />,
-        // action: registerAction,
+        action: registerAction,
       },
       {
         path: 'login',
