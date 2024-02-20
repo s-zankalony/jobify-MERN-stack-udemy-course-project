@@ -1,4 +1,12 @@
-import { Outlet, redirect, useNavigate, useNavigation } from 'react-router-dom';
+/** @format */
+
+import {
+  Outlet,
+  redirect,
+  useLoaderData,
+  useNavigate,
+  useNavigation,
+} from 'react-router-dom';
 import Wrapper from '../assets/wrappers/Dashboard';
 import { BigSidebar, Navbar, SmallSidebar } from '../components';
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -14,9 +22,10 @@ const userQuery = {
   },
 };
 
-export const loader = (queryClient) => async () => {
+export const loader = async () => {
   try {
-    return await queryClient.ensureQueryData(userQuery);
+    const { data } = await customFetch.get('/users/current-user');
+    return data;
   } catch (error) {
     return redirect('/');
   }
@@ -24,13 +33,17 @@ export const loader = (queryClient) => async () => {
 
 const DashboardContext = createContext();
 
-const DashboardLayout = () => {
+// eslint-disable-next-line react/prop-types
+const DashboardLayout = ({ isDarkThemeEnabled }) => {
+  const { user } = useLoaderData();
+  const navigate = useNavigate();
+
   // const { user } = useQuery(userQuery).data;
-  // const navigate = useNavigate();
   // const navigation = useNavigation();
   // const isPageLoading = navigation.state === 'loading';
+
   const [showSidebar, setShowSidebar] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(checkDefaultTheme());
+  const [isDarkTheme, setIsDarkTheme] = useState(isDarkThemeEnabled);
   // const [isAuthError, setIsAuthError] = useState(false);
 
   const toggleDarkTheme = () => {
@@ -44,12 +57,11 @@ const DashboardLayout = () => {
     setShowSidebar(!showSidebar);
   };
 
-  // const logoutUser = async () => {
-  //   navigate('/');
-  //   await customFetch.get('/auth/logout');
-  //   queryClient.invalidateQueries();
-  //   toast.success('Logging out...');
-  // };
+  const logoutUser = async () => {
+    navigate('/');
+    await customFetch('/auth/logout');
+    toast.success('Logging out...');
+  };
 
   // customFetch.interceptors.response.use(
   //   (response) => {
@@ -71,12 +83,12 @@ const DashboardLayout = () => {
   return (
     <DashboardContext.Provider
       value={{
-        // user,
+        user,
         showSidebar,
         isDarkTheme,
         toggleDarkTheme,
         toggleSidebar,
-        // logoutUser,
+        logoutUser,
       }}
     >
       <Wrapper>
@@ -85,9 +97,9 @@ const DashboardLayout = () => {
           <BigSidebar />
           <div>
             <Navbar />
-            {/* <div className="dashboard-page">
-              {isPageLoading ? <Loading /> : <Outlet context={{ user }} />}
-            </div> */}
+            <div className="dashboard-page">
+              <Outlet context={{ user }} />
+            </div>
           </div>
         </main>
       </Wrapper>
