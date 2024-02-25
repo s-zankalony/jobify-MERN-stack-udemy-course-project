@@ -1,55 +1,61 @@
-/** @format */
-
 import { FormRow, FormRowSelect } from '../components';
 import Wrapper from '../assets/wrappers/DashboardFormPage';
-import { useNavigation, useOutletContext } from 'react-router-dom';
+import { useLoaderData, useParams } from 'react-router-dom';
 import { JOB_STATUS, JOB_TYPE } from '../../../utils/constants';
-import { Form, redirect } from 'react-router-dom';
-import customFetch from '../utils/customFetch';
+import { Form, useNavigation, redirect } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import customFetch from '../utils/customFetch';
 
-export const action = async ({ request }) => {
+export const loader = async ({ params }) => {
+  try {
+    const { data } = await customFetch.get(`/jobs/${params.id}`);
+    return data;
+  } catch (error) {
+    toast.error(error?.response?.data?.msg);
+    return redirect('/dashboard/all-jobs');
+  }
+  return null;
+};
+export const action = async ({ request, params }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.post('/jobs', data);
-    toast.success('Job added successfully');
-    return redirect('/all-jobs');
+    await customFetch.patch(`/jobs/${params.id}`, data);
+    toast.success('Job edited successfully');
+    return redirect('/dashboard/all-jobs');
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
   }
 };
 
-const AddJob = () => {
-  const { user } = useOutletContext();
+const EditJob = () => {
+  const { job } = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
-
   return (
     <Wrapper>
       <Form method="post" className="form">
-        <h4 className="form-title">add job</h4>
+        <h4 className="form-title">edit-job</h4>
         <div className="form-center">
-          <FormRow type="text" name="position" />
-          <FormRow type="text" name="company" />
+          <FormRow type="text" name="position" defaultValue={job.position} />
+          <FormRow type="text" name="company" defaultValue={job.company} />
           <FormRow
             type="text"
-            labelText="job location"
             name="jobLocation"
-            defaultValue={user.location}
+            labelText="Job Location"
+            defaultValue={job.jobLocation}
           />
-
           <FormRowSelect
-            labelText="job status"
             name="jobStatus"
-            defaultValue={JOB_STATUS.PENDING}
+            labelText="Job Status"
+            defaultValue={job.jobStatus}
             list={Object.values(JOB_STATUS)}
           />
           <FormRowSelect
-            labelText="job type"
             name="jobType"
-            defaultValue={JOB_TYPE.FULL_TIME}
+            labelText="Job Type"
+            defaultValue={job.jobType}
             list={Object.values(JOB_TYPE)}
           />
           <button
@@ -59,10 +65,10 @@ const AddJob = () => {
           >
             {isSubmitting ? 'Submitting...' : 'Submit'}
           </button>
-          {/* <SubmitBtn formBtn /> */}
         </div>
       </Form>
     </Wrapper>
   );
 };
-export default AddJob;
+
+export default EditJob;
