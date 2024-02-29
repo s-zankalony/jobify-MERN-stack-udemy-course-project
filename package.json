@@ -4,16 +4,6 @@
   "description": "[Jobify](https://jobify.live/)",
   "main": "index.js",
   "type": "module",
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-react",
-        {
-          "runtime": "automatic"
-        }
-      ]
-    ]
-  },
   "scripts": {
     "setup-project": "npm i && cd client && npm i",
     "server": "nodemon server",
