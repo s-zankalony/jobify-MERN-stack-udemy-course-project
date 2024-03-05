@@ -10,6 +10,11 @@ const SearchContainer = () => {
 
   const submit = useSubmit();
 
+  const handleReset = () => {
+    e.preventDefault();
+    this.form.reset();
+  };
+
   const debounce = (onChange) => {
     let timeout;
     return (e) => {
@@ -62,9 +67,7 @@ const SearchContainer = () => {
           <Link
             to="/dashboard/all-jobs"
             className="btn form-btn delete-btn"
-            onClick={(e) => {
-              e.currentTarget.form.reset();
-            }}
+            onClick={handleReset}
           >
             Reset Search Values
           </Link>
