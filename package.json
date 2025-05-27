@@ -12,6 +12,10 @@
     "client": "cd client && npm run dev",
     "dev": "concurrently --kill-others-on-fail \" npm run server\" \" npm run client\""
   },
+  // In your package.json
+"overrides": {
+  "semver": "^7.5.2"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
