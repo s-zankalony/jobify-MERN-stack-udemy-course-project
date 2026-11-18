@@ -1,16 +1,14 @@
 import multer from 'multer';
-import dataParser from 'datauri/parser.js';
+import mimer from 'mimer';
 import path from 'path';
 
 const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 
-const parser = new dataParser();
-
 export const formatImage = (file) => {
   const fileExtension = path.extname(file.originalname).toString();
-  return parser.format(fileExtension, file.buffer).content;
+  return `data:${mimer(fileExtension)};base64,${file.buffer.toString('base64')}`;
 };
 
 export default upload;
